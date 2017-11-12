@@ -20,4 +20,5 @@
 #include <helper_functions.h>
 #include <map.h>
 #include <json.hpp>
+#include <cassert>
 // TODO: reference additional headers your program requires here
