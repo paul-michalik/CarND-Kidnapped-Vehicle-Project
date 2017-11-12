@@ -24,8 +24,11 @@ struct Particle {
 };
 
 
-
+namespace TestsCarNDKVPProject {
+    class testable_particle_filter;
+}
 class ParticleFilter {
+    friend class TestsCarNDKVPProject::testable_particle_filter;
 	
 	// Number of particles to draw
 	int num_particles; 
