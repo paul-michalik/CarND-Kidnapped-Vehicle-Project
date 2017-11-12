@@ -121,7 +121,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
             map_landmarks.landmark_list.begin(),
             map_landmarks.landmark_list.end(),
             std::back_inserter(predictions),
-            [&](auto const& lm) {
+            [&](Map::single_landmark_s const& lm) {
                 return LandmarkObs{
                     lm.id_i,
                     lm.x_f,
@@ -129,7 +129,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
                 };
             });
         predictions.erase( std::remove_if(predictions.begin(), predictions.end(), 
-            [&](auto const& lmo) {
+            [&](LandmarkObs const& lmo) {
                 return !(
                     fabs(lmo.x - p.x) <= sensor_range &&
                     fabs(lmo.y - p.y) <= sensor_range
@@ -137,13 +137,13 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
             }), 
             predictions.end());
 
-        // transformed_os = transformed observations from vehicle coordinates to map coordinates:
+        // observations_tr = transformed observations from vehicle coordinates to map coordinates:
         std::vector<LandmarkObs> observations_tr;
         std::transform(
             observations.begin(), 
             observations.end(), 
             std::back_inserter(observations_tr),
-            [&](auto const& lmo) {
+            [&](LandmarkObs const& lmo) {
                 return LandmarkObs{
                     lmo.id,
                     cos(p.theta) * lmo.x - sin(p.theta) * lmo.y + p.x,
@@ -159,7 +159,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
         for (auto& o : observations_tr) {
             // find compatible prediction:
             auto lm_pi = std::find_if(predictions.begin(), predictions.end(), 
-                [&](auto const& p) {
+                [&](LandmarkObs const& p) {
                     return p.id == o.id;
                 });
             assert(lm_pi != predictions.end());
